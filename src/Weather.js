@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
 import WeatherInfo from "./WeatherInfo";
@@ -13,6 +13,7 @@ export default function Weather(props) {
     console.log("City", city);
     // on submit of the search form, prevent default, show loading text, get info from weather API, run setWeatherFromAPIResponse function.
     event.preventDefault();
+    setError("");
     runSearch();
   }
 
@@ -28,11 +29,14 @@ export default function Weather(props) {
     console.log("response", response);
     if (response.data.status) {
       if (response.data.status === "not_found") {
-        setError("City not found.");
+        setError("City not found. Try searching for a different city.");
+        setIsLoading(false);
+      }
+      if (response.data.status === 400) {
+        setError("Bad request. Try searching for a different city.");
         setIsLoading(false);
       }
     } else {
-      setError("");
       setWeather({
         city: response.data.city,
         country: response.data.country,
@@ -47,14 +51,8 @@ export default function Weather(props) {
     setIsLoading(false);
   }
 
-  // runs search on the first load of the page
-  useEffect(() => {
-    runSearch();
-  }, []);
-
   return (
     <div>
-      {/* Always show form */}
       <form onSubmit={onSubmit} className="searchForm">
         <input
           type="search"
@@ -66,22 +64,18 @@ export default function Weather(props) {
         />
         <input type="submit" value="Search 🔍" className="searchButton" />
       </form>
-      {/* If form is loading, show loading text */}
-      {isLoading ? (
-        <div className="weather">Loading weather... </div>
-      ) : (
-        // If form is not loading, weather is set, and error is NOT set, then display weather
-        <div>
-          {weather && !error ? (
-            <div className="weather">
-              <WeatherInfo data={weather} />
-            </div>
-          ) : (
-            // otherwise, display the error
-            <div className="weather">{error}</div>
-          )}
+      {/* if form is loading, show loading screen */}
+      {isLoading && <div className="weather">Loading...</div>}
+      {/* if form has set weather, and is not loading, and doesnt have an error, show weather */}
+      {weather && !isLoading && !error && (
+        <div className="weather">
+          <WeatherInfo data={weather} />
         </div>
       )}
+      {/* if form has an error, show error */}
+      {error && <div className="weather">{error}</div>}
+      {/* if weather not set, and form is not loading, run search (on first load) */}
+      {!weather && !isLoading && runSearch()}
     </div>
   );
 }

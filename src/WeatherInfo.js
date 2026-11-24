@@ -33,15 +33,15 @@ export default function WeatherInfo(props) {
         </div>
         <div className="weatherDetailContainer">
           <div className="weatherDetailContent">
-            <span className="weatherDetailLabel">Wind:</span>
+            <span className="weatherDetailLabel">💨 Wind:</span>
             <span className="weatherDetailValue">{props.data.wind}km/h</span>
           </div>
           <div className="weatherDetailContent">
-            <span className="weatherDetailLabel">Humidity:</span>
+            <span className="weatherDetailLabel">💧 Humidity:</span>
             <span className="weatherDetailValue">{props.data.humidity}%</span>
           </div>
           <div className="weatherDetailContent">
-            <span className="weatherDetailLabel">Feels Like:</span>
+            <span className="weatherDetailLabel">🌡️ Feels Like:</span>
             <span className="weatherDetailValue">
               {Math.round(props.data.feelsLike)}°C
             </span>
